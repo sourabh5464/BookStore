@@ -1,6 +1,8 @@
-﻿using BookStore.Db;
+﻿using BookStore.Data;
+using BookStore.Db;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Controllers
 {
@@ -55,6 +57,37 @@ namespace BookStore.Controllers
 
 
             return Ok(Sod);
+        }
+
+        [HttpGet]
+        [Route("GetLangaueFilter")]
+        public IActionResult GetLangaueFilter([FromQuery] string Name, [FromQuery] string? description)
+        {
+            //for filter 2 data
+            //var dd= _connection.Languages.Where(x=>x.Title==Name && x.Description==description).FirstOrDefault();
+
+
+            //FILTER 
+            var dd = _connection.Languages.Where(x => x.Title == Name && (string.IsNullOrEmpty(description) || x.Description == description)).FirstOrDefault();
+
+            //get multiple recored which name is same 
+            var ddd = _connection.Languages.Where(x => x.Title == Name).ToList();
+
+
+            return Ok(dd);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetAllLanga([FromBody] List<int> obj)
+        {
+            //it is used when user send dyname multiple ids and we have to get multiple recoreds according to that
+            var result= await _connection.Languages.Where(x=>obj.Contains(x.Id)).ToListAsync();
+
+            //using select we can selet the table colum which is reired so time will be minimize 
+            //in select querry we are manullay mapping data to obj before useing select we are writing query like select * now select id ,title
+            var result1 = await _connection.Languages.Where(x => obj.Contains(x.Id)).Select(x=>new Language() {Id=x.Id, Title=x.Title}).ToListAsync();
+
+            return Ok(result1);
         }
 
 
