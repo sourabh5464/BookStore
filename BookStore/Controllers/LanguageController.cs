@@ -90,8 +90,60 @@ namespace BookStore.Controllers
             return Ok(result1);
         }
 
+        //to insert a single record
+        [HttpPost]
+        [Route("AddLanguge")]
+        public async Task<IActionResult> AddLanguge([FromBody] Language lang)
+        {
+            //to insert a single record data from model 
+            _connection.Languages.Add(lang);// here data is not added in database it store in entity it uses a trackerpoint to track 
+            await _connection.SaveChangesAsync();//here dada is add indb
+
+            return Ok();
+        }
+
+        //to insert a multiplerecord
+        [HttpPost]
+        [Route("AddLangugemul")]
+        public async Task<IActionResult> AddLanguge([FromBody] List<Language> lang)
+        {
+            await _connection.Languages.AddRangeAsync(lang);
+
+            await _connection.SaveChangesAsync();
 
 
+            return Ok();
+        }
+
+
+
+        // how to add data in multiple table at same time liek book has auther id so in both table i have to add data 
+        //it will increse performance bec we are not calling db every time so.
+        [HttpPost]
+        [Route("AddBOOK")]
+        public async Task<IActionResult> AddBOOK([FromBody] Book bookobj)
+        {
+            //added hardcoded new obj auther in table book author author obj and pass to add method we can pass dymanicaly in obj format
+            //and directly we can add that obj
+
+            
+            Author obj = new Author()
+            {
+                Name="sourabh tapase",
+                Email="sourabhtapase051@gmail.com"
+
+            };
+
+            bookobj.Author=obj;
+
+
+
+            //to insert a single record data from model 
+            _connection.Books.Add(bookobj);// here data is not added in database it store in entity it uses a trackerpoint to track 
+            await _connection.SaveChangesAsync();//here dada is add indb
+
+            return Ok();
+        }
 
     }
 }

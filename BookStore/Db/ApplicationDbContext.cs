@@ -43,7 +43,7 @@ namespace BookStore.Db
         public DbSet<CurrencyType> CurrencyTypes { get; set; }
 
 
-
+        public DbSet<Author> Author { get; set; }
 
     }
 }
